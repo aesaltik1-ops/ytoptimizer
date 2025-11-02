@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>YT Optimizer – SEO-Friendly YouTube Titles & Hashtags</title>
+  <meta name="description" content="Generate YouTube titles & hashtags in seconds. Supports English, Español, Türkçe.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>▶️</text></svg>">
+  <style>
+    :root{--bg:#0b1020;--panel:#101828;--ink:#e5e7eb;--muted:#94a3b8;--cta:#22c55e;--stroke:#223048}
+    html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:980px;margin:40px auto;padding:24px}
+    .card{background:linear-gradient(180deg,#101828,#0b1224); border:1px solid #1f2937;border-radius:14px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{margin:0 0 10px;font-size:26px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
+    label{font-size:14px;color:var(--muted)}
+    input[type="text"]{flex:1;min-width:260px;background:#0b1426;border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:12px}
+    select{background:#0b1426;border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:10px}
+    button{border:0;border-radius:10px;padding:12px 16px;cursor:pointer}
+    .primary{background:var(--cta);color:#052d17;font-weight:700}
+    .ghost{background:#121a2d;color:#e5e7eb;border:1px solid var(--stroke)}
+    textarea{width:100%;min-height:120px;background:#0b1426;border:1px solid var(--stroke);color:#fff;border-radius:10px;padding:12px}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:820px){.cols{grid-template-columns:1fr}}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--stroke);border-radius:999px;background:#0b1426;color:#cbd5e1;font-size:12px}
+    .copy{font-size:12px}
+    .thumb{display:flex;gap:12px;align-items:center}
+    .thumb img{width:160px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--stroke);background:#0b1426}
+    .muted{color:var(--muted);font-size:12px}
+    a{color:#a5b4fc;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h1 id="t_title">SEO-Friendly YouTube Titles & Hashtags — in Seconds</h1>
+        <div class="row">
+          <label class="pill">🌐 <span id="t_lang">Language</span></label>
+          <select id="lang" aria-label="Language">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="tr">Türkçe</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <label class="pill">🎯 <span id="t_topic">Video topic</span></label>
+        <input id="topic" type="text" placeholder="e.g., Best iPhone 16 camera tips"/>
+        <button id="gen" class="primary">Generate</button>
+        <button id="clear" class="ghost">Clear</button>
+      </div>
+
+      <div class="thumb">
+        <div>
+          <label class="pill">🖼️ <span id="t_thumb">Thumbnail</span></label><br/>
+          <input id="thumb" type="file" accept="image/*"/>
+          <div class="muted" id="t_thumb_note">PNG/JPG; preview below</div>
+        </div>
+        <img id="preview" alt="thumbnail preview"/>
+      </div>
+
+      <div class="cols" style="margin-top:14px">
+        <div>
+          <label class="pill">🧠 <span id="t_titles">Smart Titles</span></label>
+          <textarea id="titles" readonly></textarea>
+          <button data-copy="#titles" class="ghost copy" id="t_copy_titles">Copy titles</button>
+        </div>
+        <div>
+          <label class="pill">#️⃣ <span id="t_hashtags">Hashtag Sets</span></label>
+          <textarea id="hashtags" readonly></textarea>
+          <button data-copy="#hashtags" class="ghost copy" id="t_copy_tags">Copy hashtags</button>
+        </div>
+      </div>
+
+      <div class="muted" id="t_note" style="margin-top:10px">
+        No signup needed. Works on mobile & desktop. Share this page link directly.
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:18px">
+      © YT Optimizer
+    </p>
+  </div>
+
+  <script>
+    // ===== i18n strings =====
+    const STR = {
+      en:{title:"SEO-Friendly YouTube Titles & Hashtags — in Seconds", lang:"Language", topic:"Video topic", thumb:"Thumbnail", thumb_note:"PNG/JPG; preview below", smart:"Smart Titles", tags:"Hashtag Sets", copyTitles:"Copy titles", copyTags:"Copy hashtags", note:"No signup needed. Works on mobile & desktop. Share this page link directly.", genBtn:"Generate", clearBtn:"Clear", placeholder:"e.g., Best iPhone 16 camera tips"},
+      es:{title:"Títulos y hashtags para YouTube — en segundos", lang:"Idioma", topic:"Tema del video", thumb:"Miniatura", thumb_note:"PNG/JPG; vista previa abajo", smart:"Títulos inteligentes", tags:"Conjuntos de hashtags", copyTitles:"Copiar títulos", copyTags:"Copiar hashtags", note:"Sin registro. Funciona en móvil y escritorio. Comparte el enlace.", genBtn:"Generar", clearBtn:"Limpiar", placeholder:"p. ej., Mejores trucos de cámara del iPhone 16"},
+      tr:{title:"SEO Uyumlu YouTube Başlık & Hashtag — Saniyeler İçinde", lang:"Dil", topic:"Video konusu", thumb:"Küçük resim", thumb_note:"PNG/JPG; önizleme aşağıda", smart:"Akıllı Başlıklar", tags:"Hashtag Setleri", copyTitles:"Başlıkları kopyala", copyTags:"Hashtagleri kopyala", note:"Kayıt gerekmez. Mobil ve masaüstünde çalışır. Bu sayfanın linkini paylaşın.", genBtn:"Üret", clearBtn:"Temizle", placeholder:"ör. iPhone 16 kamera ipuçları"}
+    };
+    const $ = s => document.querySelector(s);
+
+    function setLang(l){
+      const S = STR[l]||STR.en;
+      $("#t_title").textContent=S.title;
+      $("#t_lang").textContent=S.lang;
+      $("#t_topic").textContent=S.topic;
+      $("#t_thumb").textContent=S.thumb;
+      $("#t_thumb_note").textContent=S.thumb_note;
+      $("#t_titles").textContent=S.smart;
+      $("#t_hashtags").textContent=S.tags;
+      $("#t_copy_titles").textContent=S.copyTitles;
+      $("#t_copy_tags").textContent=S.copyTags;
+      $("#t_note").textContent=S.note;
+      $("#gen").textContent=S.genBtn;
+      $("#clear").textContent=S.clearBtn;
+      $("#topic").placeholder=S.placeholder;
+      document.documentElement.lang=l;
+      localStorage.setItem("lang", l);
+    }
+
+    // simple generators
+    function capitalize(s){return s.replace(/\b\w/g,m=>m.toUpperCase());}
+    function slugWords(s){
+      return s.toLowerCase()
+        .replace(/&/g," and ")
+        .replace(/[^a-z0-9\s]/gi,"")
+        .split(/\s+/).filter(Boolean);
+    }
+    function genTitles(topic, l){
+      const t=capitalize(topic.trim());
+      const patterns = {
+        en:[
+          `Top ${Math.floor(Math.random()*7)+5} ${t}`,
+          `${t}: Do This to Grow FAST`,
+          `${t} — Beginner to Pro`,
+          `I Tried ${t} (Results Shocked Me)`,
+          `${t} in 60 Seconds`,
+          `SECRET Tricks for ${t}`
+        ],
+        es:[
+          `Top ${Math.floor(Math.random()*7)+5} ${t}`,
+          `${t}: Haz Esto y Crece Rápido`,
+          `${t} — De Principiante a Pro`,
+          `Probé ${t} (Resultados Sorprendentes)`,
+          `${t} en 60 Segundos`,
+          `Trucos SECRETOS para ${t}`
+        ],
+        tr:[
+          `En İyi ${Math.floor(Math.random()*7)+5} ${t}`,
+          `${t}: Hızlı Büyümek İçin Bunu Yapın`,
+          `${t} — Yeni Başlayandan Uzmana`,
+          `${t} Denedim (Sonuç Şaşırttı!)`,
+          `60 Saniyede ${t}`,
+          `${t} İçin GİZLİ Taktikler`
+        ]
+      };
+      return (patterns[l]||patterns.en).join("\\n");
+    }
+    function genHash(topic, l){
+      const base = slugWords(topic);
+      const common = {en:["youtube","shorts","viral","tutorial","howto","ai"], es:["youtube","corto","viral","tutorial","como","ia"], tr:["youtube","kisa","viral","egitim","nasil","yapayzeka"]};
+      const all = Array.from(new Set([...base, ...common[l||"en"]]));
+      const sets = [
+        all.slice(0,10),
+        all.slice(2,12),
+        all.slice(4,14)
+      ].map(arr=>arr.map(w=>"#"+w).join(" "));
+      return sets.join("\\n");
+    }
+
+    // events
+    $("#lang").addEventListener("change", e=> setLang(e.target.value));
+    $("#gen").addEventListener("click", ()=>{
+      const l=$("#lang").value||"en";
+      const topic=$("#topic").value||"";
+      if(!topic.trim()){alert(l==="tr"?"Lütfen bir konu yazın":l==="es"?"Escribe un tema":"Please enter a topic");return;}
+      $("#titles").value = genTitles(topic,l);
+      $("#hashtags").value = genHash(topic,l);
+    });
+    $("#clear").addEventListener("click", ()=>{
+      $("#topic").value="";
+      $("#titles").value="";
+      $("#hashtags").value="";
+      $("#thumb").value="";
+      $("#preview").src="";
+    });
+    document.querySelectorAll(".copy").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const sel = btn.getAttribute("data-copy");
+        const el = document.querySelector(sel);
+        el.select(); document.execCommand("copy");
+        btn.textContent = (document.documentElement.lang==="tr")?"Kopyalandı!":(document.documentElement.lang==="es")?"¡Copiado!":"Copied!";
+        setTimeout(()=>{
+          btn.textContent = btn.id==="t_copy_titles" ? STR[document.documentElement.lang||"en"].copyTitles : STR[document.documentElement.lang||"en"].copyTags;
+        },900);
+      });
+    });
+    $("#thumb").addEventListener("change",(e)=>{
+      const f=e.target.files&&e.target.files[0];
+      if(!f) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{$("#preview").src=ev.target.result;};
+      reader.readAsDataURL(f);
+    });
+
+    // init
+    setLang(localStorage.getItem("lang")||"en");
+  </script>
+</body>
+</html>
